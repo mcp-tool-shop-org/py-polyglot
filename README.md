@@ -11,8 +11,8 @@
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/actions"><img src="https://github.com/mcp-tool-shop-org/py-polyglot/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot"><img src="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot/branch/main/graph/badge.svg" alt="Codecov"></a>
-  <a href="https://pypi.org/project/py-polyglot/"><img src="https://img.shields.io/pypi/v/py-polyglot" alt="PyPI"></a>
-  <a href="https://pypi.org/project/py-polyglot/"><img src="https://img.shields.io/pypi/pyversions/py-polyglot" alt="Python"></a>
+  <a href="https://pypi.org/project/polyglot-gpu/"><img src="https://img.shields.io/pypi/v/polyglot-gpu" alt="PyPI"></a>
+  <a href="https://pypi.org/project/polyglot-gpu/"><img src="https://img.shields.io/pypi/pyversions/polyglot-gpu" alt="Python"></a>
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/blob/main/LICENSE"><img src="https://img.shields.io/github/license/mcp-tool-shop-org/py-polyglot" alt="License"></a>
   <a href="https://mcp-tool-shop-org.github.io/py-polyglot/"><img src="https://img.shields.io/badge/Landing_Page-live-blue" alt="Landing Page"></a>
 </p>
@@ -44,7 +44,7 @@ Python port of [polyglot-mcp](https://github.com/mcp-tool-shop-org/polyglot-mcp)
 ## Install
 
 ```bash
-pip install py-polyglot
+pip install polyglot-gpu
 ```
 
 ## Library Usage
@@ -98,8 +98,8 @@ result = await translate("Hello world", "en", "ja",
 ```json
 {
   "mcpServers": {
-    "py-polyglot": {
-      "command": "py-polyglot"
+    "polyglot-gpu": {
+      "command": "polyglot-gpu"
     }
   }
 }

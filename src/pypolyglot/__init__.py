@@ -1,5 +1,5 @@
 """
-py-polyglot — Local GPU translation via TranslateGemma + Ollama.
+polyglot-gpu — Local GPU translation via TranslateGemma + Ollama.
 
 57 languages, zero cloud dependency. Use as a Python library or MCP server.
 
@@ -12,10 +12,10 @@ Library usage:
 MCP server:
     python -m pypolyglot
     # or
-    py-polyglot
+    polyglot-gpu
 """
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 from .translate import translate, translate_batch, TranslateResult, TranslateOptions
 from .markdown import translate_markdown, TranslateMarkdownResult, TranslateMarkdownOptions

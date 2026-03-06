@@ -1,23 +1,23 @@
 import type { SiteConfig } from '@mcptoolshop/site-theme';
 
 export const config: SiteConfig = {
-  title: 'py-polyglot',
+  title: 'polyglot-gpu',
   description: 'Local GPU translation Python library + MCP server — TranslateGemma via Ollama, 57 languages, zero cloud dependency.',
   logoBadge: 'Py',
-  brandName: 'py-polyglot',
+  brandName: 'polyglot-gpu',
   repoUrl: 'https://github.com/mcp-tool-shop-org/py-polyglot',
-  pypiUrl: 'https://pypi.org/project/py-polyglot/',
+  pypiUrl: 'https://pypi.org/project/polyglot-gpu/',
   footerText: 'MIT Licensed — built by <a href="https://mcp-tool-shop.github.io/" style="color:var(--color-muted);text-decoration:underline">MCP Tool Shop</a>',
 
   hero: {
     badge: 'Open source',
-    headline: 'py-polyglot',
+    headline: 'polyglot-gpu',
     headlineAccent: '57 languages on your GPU.',
     description: 'Python translation library + MCP server. TranslateGemma via Ollama — zero cloud dependency, zero API keys.',
     primaryCta: { href: '#usage', label: 'Get started' },
     secondaryCta: { href: '#features', label: 'Learn more' },
     previews: [
-      { label: 'Install', code: 'pip install py-polyglot' },
+      { label: 'Install', code: 'pip install polyglot-gpu' },
       { label: 'Translate', code: 'result = await translate("Hello", "en", "ja")' },
       { label: 'MCP', code: 'python -m pypolyglot' },
     ],
@@ -43,10 +43,10 @@ export const config: SiteConfig = {
       id: 'usage',
       title: 'Usage',
       cards: [
-        { title: 'Install', code: 'pip install py-polyglot' },
+        { title: 'Install', code: 'pip install polyglot-gpu' },
         { title: 'Simple translation', code: "from pypolyglot import translate\n\nresult = await translate(\"Hello world\", \"en\", \"ja\")\nprint(result.translation)  # こんにちは世界" },
         { title: 'Markdown translation', code: "from pypolyglot import translate_markdown\n\nresult = await translate_markdown(md, \"en\", \"fr\")\nprint(result.markdown)" },
-        { title: 'MCP server', code: "# Add to Claude Code config:\n{\n  \"mcpServers\": {\n    \"py-polyglot\": {\n      \"command\": \"py-polyglot\"\n    }\n  }\n}" },
+        { title: 'MCP server', code: "# Add to Claude Code config:\n{\n  \"mcpServers\": {\n    \"polyglot-gpu\": {\n      \"command\": \"polyglot-gpu\"\n    }\n  }\n}" },
       ],
     },
     {

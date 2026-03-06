@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "py-polyglot"
-version = "1.0.1"
+name = "polyglot-gpu"
+version = "1.0.2"
 description = "Local GPU translation Python library + MCP server — TranslateGemma via Ollama, 57 languages, zero cloud dependency"
 readme = "README.md"
 license = "MIT"
@@ -28,7 +28,7 @@ dependencies = [
 ]
 
 [project.scripts]
-py-polyglot = "pypolyglot.__main__:main"
+polyglot-gpu = "pypolyglot.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/mcp-tool-shop-org/py-polyglot"
