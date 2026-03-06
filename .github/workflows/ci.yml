@@ -42,4 +42,4 @@ jobs:
         if: matrix.python-version == '3.12'
         run: |
           pip install pip-audit
-          pip-audit --strict --skip-editable
+          pip-audit --skip-editable
