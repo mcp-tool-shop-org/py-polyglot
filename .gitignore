@@ -7,3 +7,6 @@ build/
 .pytest_cache/
 *.egg
 .polyglot-cache.json
+site/.astro/
+site/dist/
+site/node_modules/

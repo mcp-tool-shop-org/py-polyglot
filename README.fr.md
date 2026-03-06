@@ -1,16 +1,15 @@
 <p align="center">
-  <a href="README.ja.md">日本語</a> | <a href="README.zh.md">中文</a> | <a href="README.es.md">Español</a> | <a href="README.fr.md">Français</a> | <a href="README.hi.md">हिन्दी</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (BR)</a>
+  <a href="README.ja.md">日本語</a> | <a href="README.zh.md">中文</a> | <a href="README.es.md">Español</a> | <a href="README.md">English</a> | <a href="README.hi.md">हिन्दी</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (BR)</a>
 </p>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/polyglot-mcp/readme.png" alt="py-polyglot" width="400">
 </p>
 
-<p align="center"><strong>Local GPU translation Python library + MCP server — TranslateGemma via Ollama, 57 languages, zero cloud dependency.</strong></p>
+<p align="center"><strong>Bibliothèque Python pour la traduction locale via GPU + serveur MCP — Traduction de Gemma via Ollama, 57 langues, sans dépendance cloud.</strong></p>
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/actions"><img src="https://github.com/mcp-tool-shop-org/py-polyglot/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot"><img src="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot/branch/main/graph/badge.svg" alt="Codecov"></a>
   <a href="https://pypi.org/project/py-polyglot/"><img src="https://img.shields.io/pypi/v/py-polyglot" alt="PyPI"></a>
   <a href="https://pypi.org/project/py-polyglot/"><img src="https://img.shields.io/pypi/pyversions/py-polyglot" alt="Python"></a>
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/blob/main/LICENSE"><img src="https://img.shields.io/github/license/mcp-tool-shop-org/py-polyglot" alt="License"></a>
@@ -19,35 +18,35 @@
 
 ---
 
-Python port of [polyglot-mcp](https://github.com/mcp-tool-shop-org/polyglot-mcp). Use as a **pip-installable library** for your Python projects or as an **MCP server** for Claude Code, Claude Desktop, and other MCP clients.
+Portage en Python de [polyglot-mcp](https://github.com/mcp-tool-shop-org/polyglot-mcp). Utilisez-le comme une **bibliothèque installable via pip** pour vos projets Python ou comme un **serveur MCP** pour Claude Code, Claude Desktop et d'autres clients MCP.
 
-## Features
+## Fonctionnalités
 
-- **57 languages** — TranslateGemma via Ollama, running 100% locally on your GPU
-- **Zero cloud dependency** — no API keys, no internet required after model download
-- **Dual-use** — Python library API + MCP server in one package
-- **Markdown-aware** — preserves code blocks, tables, HTML, URLs, badges
-- **Smart caching** — segment-level cache with fuzzy matching (translation memory)
-- **Software glossary** — 12 built-in tech terms for accurate translations
-- **Auto-everything** — auto-starts Ollama, auto-pulls models on first use
-- **GPU-safe** — semaphore-controlled concurrency prevents VRAM overload
+- **57 langues** — Traduction de Gemma via Ollama, fonctionnant entièrement localement sur votre GPU.
+- **Aucune dépendance cloud** — pas de clés API, pas de connexion Internet requise après le téléchargement du modèle.
+- **Double usage** — API de bibliothèque Python + serveur MCP dans un seul package.
+- **Prise en charge du Markdown** — préserve les blocs de code, les tableaux, le HTML, les URL, les badges.
+- **Mise en cache intelligente** — cache au niveau des segments avec correspondance floue (mémoire de traduction).
+- **Glossaire logiciel** — 12 termes techniques intégrés pour des traductions précises.
+- **Automatisation** — démarrage automatique d'Ollama, téléchargement automatique des modèles lors de la première utilisation.
+- **Sûr pour le GPU** — la gestion de la concurrence par des sémaphores évite la surcharge de la VRAM.
 
-## Requirements
+## Prérequis
 
 - Python >= 3.10
-- [Ollama](https://ollama.com) installed locally
-- GPU with sufficient VRAM for your chosen model:
-  - `translategemma:4b` — 3.3 GB (fast, good quality)
-  - `translategemma:12b` — 8.1 GB (balanced, recommended)
-  - `translategemma:27b` — 17 GB (slow, best quality)
+- [Ollama](https://ollama.com) installé localement
+- GPU avec suffisamment de VRAM pour le modèle choisi :
+- `translategemma:4b` — 3,3 Go (rapide, bonne qualité)
+- `translategemma:12b` — 8,1 Go (équilibré, recommandé)
+- `translategemma:27b` — 17 Go (lent, meilleure qualité)
 
-## Install
+## Installation
 
 ```bash
 pip install py-polyglot
 ```
 
-## Library Usage
+## Utilisation de la bibliothèque
 
 ```python
 import asyncio
@@ -91,7 +90,7 @@ result = await translate("Hello world", "en", "ja",
     TranslateOptions(on_token=lambda t: print(t, end="")))
 ```
 
-## MCP Server Usage
+## Utilisation du serveur MCP
 
 ### Claude Code
 
@@ -105,21 +104,21 @@ result = await translate("Hello world", "en", "ja",
 }
 ```
 
-Or run directly:
+Ou exécutez directement :
 
 ```bash
 python -m pypolyglot
 ```
 
-### MCP Tools
+### Outils MCP
 
-| Tool | Description |
+| Outil | Description |
 |------|-------------|
-| `translate_text` | Translate text between any of 57 languages |
-| `translate_md` | Translate markdown while preserving structure |
-| `translate_all_langs` | Translate into multiple languages at once |
-| `list_languages` | List all 57 supported languages |
-| `check_status` | Check Ollama + model availability |
+| `translate_text` | Traduire du texte entre n'importe laquelle des 57 langues. |
+| `translate_md` | Traduire le Markdown tout en préservant la structure. |
+| `translate_all_langs` | Traduire dans plusieurs langues en même temps. |
+| `list_languages` | Lister toutes les 57 langues prises en charge. |
+| `check_status` | Vérifier la disponibilité d'Ollama et du modèle. |
 
 ## Architecture
 
@@ -148,23 +147,23 @@ MCP Client (Claude Code, etc.)
    Ollama + TranslateGemma (GPU)
 ```
 
-## Environment Variables
+## Variables d'environnement
 
-| Variable | Default | Description |
+| Variable | Valeur par défaut | Description |
 |----------|---------|-------------|
-| `POLYGLOT_MODEL` | `translategemma:12b` | Default Ollama model |
-| `POLYGLOT_CONCURRENCY` | `1` | Max concurrent Ollama calls |
+| `POLYGLOT_MODEL` | `translategemma:12b` | Modèle Ollama par défaut |
+| `POLYGLOT_CONCURRENCY` | `1` | Nombre maximal d'appels Ollama simultanés |
 
-## Security
+## Sécurité
 
-- All translation runs locally — zero data leaves your machine
-- No telemetry, no API keys, no cloud dependency
-- See [SECURITY.md](SECURITY.md) for threat model
+- Toutes les traductions s'effectuent localement — aucune donnée ne quitte votre machine.
+- Pas de télémétrie, pas de clés API, pas de dépendance cloud.
+- Consultez [SECURITY.md](SECURITY.md) pour le modèle de menace.
 
-## License
+## Licence
 
 MIT
 
 ---
 
-Built by <a href="https://mcp-tool-shop.github.io/">MCP Tool Shop</a>
+Créé par <a href="https://mcp-tool-shop.github.io/">MCP Tool Shop</a>

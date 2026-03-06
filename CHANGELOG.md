@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1 (2026-03-06)
+
+- Shipcheck compliance: verify script, dependency audit, dependabot
+- Landing page via @mcptoolshop/site-theme
+- Translated READMEs (7 languages)
+
 ## 1.0.0 (2026-03-06)
 
 - Initial release — Python port of polyglot-mcp
