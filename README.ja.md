@@ -10,10 +10,12 @@
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/actions"><img src="https://github.com/mcp-tool-shop-org/py-polyglot/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot"><img src="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot/branch/main/graph/badge.svg" alt="Codecov"></a>
   <a href="https://pypi.org/project/polyglot-gpu/"><img src="https://img.shields.io/pypi/v/polyglot-gpu" alt="PyPI"></a>
   <a href="https://pypi.org/project/polyglot-gpu/"><img src="https://img.shields.io/pypi/pyversions/polyglot-gpu" alt="Python"></a>
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/blob/main/LICENSE"><img src="https://img.shields.io/github/license/mcp-tool-shop-org/py-polyglot" alt="License"></a>
   <a href="https://mcp-tool-shop-org.github.io/py-polyglot/"><img src="https://img.shields.io/badge/Landing_Page-live-blue" alt="Landing Page"></a>
+  <a href="https://mcp-tool-shop-org.github.io/py-polyglot/handbook/"><img src="https://img.shields.io/badge/Handbook-docs-teal" alt="Handbook"></a>
 </p>
 
 ---
@@ -22,14 +24,15 @@
 
 ## 機能
 
-- **57言語** — Ollama経由でTranslateGemmaを使用。100%ローカルでGPU上で動作
+- **57言語** — Ollama経由でTranslateGemmaを利用し、100%ローカルのGPUで動作
 - **クラウドへの依存なし** — APIキーは不要、モデルのダウンロード後はインターネット接続も不要
 - **多用途** — PythonライブラリAPI + MCPサーバーを1つのパッケージで提供
-- **Markdown対応** — コードブロック、表、HTML、URL、バッジなどを保持
+- **Markdown対応** — コードブロック、テーブル、HTML、URL、バッジなどを保持
 - **スマートキャッシュ** — セグメントレベルのキャッシュとファジーマッチング（翻訳メモリ）
 - **ソフトウェア用語集** — 正確な翻訳のための12の組み込み技術用語
 - **自動化** — Ollamaを自動起動、初回利用時にモデルを自動ダウンロード
 - **GPU保護** — セマフォ制御による並行処理で、VRAMの過負荷を防止
+- **本番環境向け** — コネクションプール、構造化されたログ、100件のテスト
 
 ## 必要条件
 
@@ -135,7 +138,7 @@ MCP Client (Claude Code, etc.)
 │  semaphore.py    │  GPU-safe concurrency
 │  validate.py     │  Output validation
 ├──────────────────┤
-│   ollama.py      │  httpx client → localhost:11434
+│   ollama.py      │  httpx pooled client → Ollama
 │   cache.py       │  Segment cache + fuzzy memory
 │  glossary.py     │  Software term dictionary
 │ languages.py     │  57 language definitions

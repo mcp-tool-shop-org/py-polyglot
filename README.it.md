@@ -10,10 +10,12 @@
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/actions"><img src="https://github.com/mcp-tool-shop-org/py-polyglot/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot"><img src="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot/branch/main/graph/badge.svg" alt="Codecov"></a>
   <a href="https://pypi.org/project/polyglot-gpu/"><img src="https://img.shields.io/pypi/v/polyglot-gpu" alt="PyPI"></a>
   <a href="https://pypi.org/project/polyglot-gpu/"><img src="https://img.shields.io/pypi/pyversions/polyglot-gpu" alt="Python"></a>
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/blob/main/LICENSE"><img src="https://img.shields.io/github/license/mcp-tool-shop-org/py-polyglot" alt="License"></a>
   <a href="https://mcp-tool-shop-org.github.io/py-polyglot/"><img src="https://img.shields.io/badge/Landing_Page-live-blue" alt="Landing Page"></a>
+  <a href="https://mcp-tool-shop-org.github.io/py-polyglot/handbook/"><img src="https://img.shields.io/badge/Handbook-docs-teal" alt="Handbook"></a>
 </p>
 
 ---
@@ -30,6 +32,7 @@ Porting in Python di [polyglot-mcp](https://github.com/mcp-tool-shop-org/polyglo
 - **Glossario software** — 12 termini tecnici integrati per traduzioni accurate.
 - **Automatizzazione completa** — avvia automaticamente Ollama, scarica automaticamente i modelli al primo utilizzo.
 - **Sicurezza per la GPU** — la gestione della concorrenza tramite semaforo previene il sovraccarico della VRAM.
+- **Ottimizzato per la produzione** — gestione delle connessioni, logging strutturato, 100 test.
 
 ## Requisiti
 
@@ -135,7 +138,7 @@ MCP Client (Claude Code, etc.)
 │  semaphore.py    │  GPU-safe concurrency
 │  validate.py     │  Output validation
 ├──────────────────┤
-│   ollama.py      │  httpx client → localhost:11434
+│   ollama.py      │  httpx pooled client → Ollama
 │   cache.py       │  Segment cache + fuzzy memory
 │  glossary.py     │  Software term dictionary
 │ languages.py     │  57 language definitions

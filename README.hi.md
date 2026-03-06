@@ -10,10 +10,12 @@
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/actions"><img src="https://github.com/mcp-tool-shop-org/py-polyglot/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot"><img src="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot/branch/main/graph/badge.svg" alt="Codecov"></a>
   <a href="https://pypi.org/project/polyglot-gpu/"><img src="https://img.shields.io/pypi/v/polyglot-gpu" alt="PyPI"></a>
   <a href="https://pypi.org/project/polyglot-gpu/"><img src="https://img.shields.io/pypi/pyversions/polyglot-gpu" alt="Python"></a>
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/blob/main/LICENSE"><img src="https://img.shields.io/github/license/mcp-tool-shop-org/py-polyglot" alt="License"></a>
   <a href="https://mcp-tool-shop-org.github.io/py-polyglot/"><img src="https://img.shields.io/badge/Landing_Page-live-blue" alt="Landing Page"></a>
+  <a href="https://mcp-tool-shop-org.github.io/py-polyglot/handbook/"><img src="https://img.shields.io/badge/Handbook-docs-teal" alt="Handbook"></a>
 </p>
 
 ---
@@ -23,18 +25,19 @@
 ## विशेषताएं
 
 - **57 भाषाएँ** — ट्रांसलेटगेमा वाया ओललामा, जो आपके जीपीयू पर 100% स्थानीय रूप से चलता है।
-- **शून्य क्लाउड निर्भरता** — किसी एपीआई कुंजी की आवश्यकता नहीं, मॉडल डाउनलोड करने के बाद इंटरनेट की आवश्यकता नहीं।
+- **शून्य क्लाउड निर्भरता** — कोई एपीआई कुंजी नहीं, मॉडल डाउनलोड करने के बाद इंटरनेट की आवश्यकता नहीं।
 - **दोहरे उपयोग** — पाइथन लाइब्रेरी एपीआई + एक पैकेज में एमसीपी सर्वर।
 - **मार्कडाउन-जागरूक** — कोड ब्लॉक, टेबल, एचटीएमएल, यूआरएल, बैज संरक्षित करता है।
-- **स्मार्ट कैशिंग** — सेगमेंट-स्तरीय कैशिंग, जिसमें अस्पष्ट मिलान (अनुवाद मेमोरी) शामिल है।
+- **स्मार्ट कैशिंग** — सेगमेंट-लेवल कैश, जिसमें अस्पष्ट मिलान (अनुवाद मेमोरी) शामिल है।
 - **सॉफ्टवेयर शब्दावली** — सटीक अनुवादों के लिए 12 अंतर्निहित तकनीकी शब्द।
 - **ऑटो-सब कुछ** — ओललामा को स्वचालित रूप से शुरू करता है, पहली बार उपयोग करने पर स्वचालित रूप से मॉडल डाउनलोड करता है।
 - **जीपीयू-सुरक्षित** — सिमाफोर-नियंत्रित समवर्तीता, जो वीआरएएम ओवरलोड को रोकता है।
+- **उत्पादन-ग्रेड** — कनेक्शन पूलिंग, संरचित लॉगिंग, 100 परीक्षण।
 
 ## आवश्यकताएं
 
 - पाइथन >= 3.10
-- स्थानीय रूप से [ओलामा](https://ollama.com) स्थापित
+- स्थानीय रूप से [ओललामा](https://ollama.com) स्थापित।
 - आपके द्वारा चुने गए मॉडल के लिए पर्याप्त वीआरएएम वाला जीपीयू:
 - `translategemma:4b` — 3.3 जीबी (तेज़, अच्छी गुणवत्ता)
 - `translategemma:12b` — 8.1 जीबी (संतुलित, अनुशंसित)
@@ -114,11 +117,11 @@ python -m pypolyglot
 
 | उपकरण | विवरण |
 |------|-------------|
-| `translate_text` | 57 में से किसी भी भाषा के बीच टेक्स्ट का अनुवाद करें। |
+| `translate_text` | 57 में से किसी भी भाषा के बीच पाठ का अनुवाद करें। |
 | `translate_md` | संरचना को संरक्षित करते हुए मार्कडाउन का अनुवाद करें। |
 | `translate_all_langs` | एक साथ कई भाषाओं में अनुवाद करें। |
 | `list_languages` | सभी 57 समर्थित भाषाओं की सूची देखें। |
-| `check_status` | ओलामा + मॉडल की उपलब्धता की जांच करें। |
+| `check_status` | ओललामा + मॉडल की उपलब्धता की जांच करें। |
 
 ## आर्किटेक्चर
 
@@ -135,7 +138,7 @@ MCP Client (Claude Code, etc.)
 │  semaphore.py    │  GPU-safe concurrency
 │  validate.py     │  Output validation
 ├──────────────────┤
-│   ollama.py      │  httpx client → localhost:11434
+│   ollama.py      │  httpx pooled client → Ollama
 │   cache.py       │  Segment cache + fuzzy memory
 │  glossary.py     │  Software term dictionary
 │ languages.py     │  57 language definitions

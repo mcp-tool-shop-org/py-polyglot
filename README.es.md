@@ -10,10 +10,12 @@
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/actions"><img src="https://github.com/mcp-tool-shop-org/py-polyglot/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot"><img src="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot/branch/main/graph/badge.svg" alt="Codecov"></a>
   <a href="https://pypi.org/project/polyglot-gpu/"><img src="https://img.shields.io/pypi/v/polyglot-gpu" alt="PyPI"></a>
   <a href="https://pypi.org/project/polyglot-gpu/"><img src="https://img.shields.io/pypi/pyversions/polyglot-gpu" alt="Python"></a>
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/blob/main/LICENSE"><img src="https://img.shields.io/github/license/mcp-tool-shop-org/py-polyglot" alt="License"></a>
   <a href="https://mcp-tool-shop-org.github.io/py-polyglot/"><img src="https://img.shields.io/badge/Landing_Page-live-blue" alt="Landing Page"></a>
+  <a href="https://mcp-tool-shop-org.github.io/py-polyglot/handbook/"><img src="https://img.shields.io/badge/Handbook-docs-teal" alt="Handbook"></a>
 </p>
 
 ---
@@ -23,13 +25,14 @@ Port de Python de [polyglot-mcp](https://github.com/mcp-tool-shop-org/polyglot-m
 ## Características
 
 - **57 idiomas** — TraduceGemma a través de Ollama, ejecutándose completamente localmente en tu GPU.
-- **Cero dependencia de la nube** — no requiere claves de API, ni conexión a internet después de la descarga del modelo.
+- **Sin dependencia de la nube** — no requiere claves de API, ni conexión a internet después de la descarga del modelo.
 - **Uso dual** — API de biblioteca de Python + servidor MCP en un solo paquete.
 - **Compatible con Markdown** — conserva bloques de código, tablas, HTML, URLs, insignias.
 - **Caché inteligente** — caché a nivel de segmento con coincidencia difusa (memoria de traducción).
 - **Glosario de software** — 12 términos técnicos integrados para traducciones precisas.
 - **Automatización total** — inicia automáticamente Ollama, descarga automáticamente los modelos en la primera ejecución.
 - **Seguro para GPU** — la concurrencia controlada por semáforo evita la sobrecarga de VRAM.
+- **Optimizado para producción** — agrupación de conexiones, registro estructurado, 100 pruebas.
 
 ## Requisitos
 
@@ -135,7 +138,7 @@ MCP Client (Claude Code, etc.)
 │  semaphore.py    │  GPU-safe concurrency
 │  validate.py     │  Output validation
 ├──────────────────┤
-│   ollama.py      │  httpx client → localhost:11434
+│   ollama.py      │  httpx pooled client → Ollama
 │   cache.py       │  Segment cache + fuzzy memory
 │  glossary.py     │  Software term dictionary
 │ languages.py     │  57 language definitions
@@ -158,7 +161,7 @@ MCP Client (Claude Code, etc.)
 
 - Todas las traducciones se realizan localmente — ningún dato sale de tu máquina.
 - Sin telemetría, sin claves de API, sin dependencia de la nube.
-- Consulta [SECURITY.md](SECURITY.md) para el modelo de amenazas.
+- Consulta [SECURITY.md](SECURITY.md) para obtener información sobre el modelo de amenazas.
 
 ## Licencia
 

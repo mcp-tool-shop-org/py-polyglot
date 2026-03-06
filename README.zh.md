@@ -10,10 +10,12 @@
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/actions"><img src="https://github.com/mcp-tool-shop-org/py-polyglot/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot"><img src="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot/branch/main/graph/badge.svg" alt="Codecov"></a>
   <a href="https://pypi.org/project/polyglot-gpu/"><img src="https://img.shields.io/pypi/v/polyglot-gpu" alt="PyPI"></a>
   <a href="https://pypi.org/project/polyglot-gpu/"><img src="https://img.shields.io/pypi/pyversions/polyglot-gpu" alt="Python"></a>
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/blob/main/LICENSE"><img src="https://img.shields.io/github/license/mcp-tool-shop-org/py-polyglot" alt="License"></a>
   <a href="https://mcp-tool-shop-org.github.io/py-polyglot/"><img src="https://img.shields.io/badge/Landing_Page-live-blue" alt="Landing Page"></a>
+  <a href="https://mcp-tool-shop-org.github.io/py-polyglot/handbook/"><img src="https://img.shields.io/badge/Handbook-docs-teal" alt="Handbook"></a>
 </p>
 
 ---
@@ -22,7 +24,7 @@
 
 ## 特性
 
-- **57 种语言** — 通过 Ollama 实现 TranslateGemma，完全在您的 GPU 本地运行。
+- **57 种语言** — 通过 Ollama 实现 TranslateGemma，完全在您的 GPU 上运行。
 - **零云端依赖** — 无需 API 密钥，模型下载后无需连接互联网。
 - **双重用途** — Python 库 API + MCP 服务器，集成在一个软件包中。
 - **支持 Markdown** — 保留代码块、表格、HTML、URL 和徽章。
@@ -30,6 +32,7 @@
 - **软件术语表** — 内置 12 个技术术语，用于准确的翻译。
 - **自动配置** — 自动启动 Ollama，首次使用时自动下载模型。
 - **GPU 保护** — 信号量控制的并发，防止 VRAM 过载。
+- **生产环境优化** — 连接池、结构化日志记录，包含 100 个测试用例。
 
 ## 系统要求
 
@@ -135,7 +138,7 @@ MCP Client (Claude Code, etc.)
 │  semaphore.py    │  GPU-safe concurrency
 │  validate.py     │  Output validation
 ├──────────────────┤
-│   ollama.py      │  httpx client → localhost:11434
+│   ollama.py      │  httpx pooled client → Ollama
 │   cache.py       │  Segment cache + fuzzy memory
 │  glossary.py     │  Software term dictionary
 │ languages.py     │  57 language definitions
@@ -157,7 +160,7 @@ MCP Client (Claude Code, etc.)
 ## 安全性
 
 - 所有翻译都在本地运行 — 您的数据不会离开您的机器。
-- 没有遥测数据，无需 API 密钥，无需云端依赖。
+- 无任何数据收集、无需 API 密钥、无需云端依赖。
 - 详情请参阅 [SECURITY.md](SECURITY.md)，了解安全模型。
 
 ## 许可证

@@ -6,14 +6,16 @@
   <img src="https://raw.githubusercontent.com/mcp-tool-shop-org/brand/main/logos/polyglot-mcp/readme.png" alt="py-polyglot" width="400">
 </p>
 
-<p align="center"><strong>Biblioteca Python para tradução local em GPU + servidor MCP — TranslateGemma via Ollama, 57 idiomas, sem dependência de serviços em nuvem.</strong></p>
+<p align="center"><strong>Biblioteca Python para tradução local em GPU + servidor MCP — Traduza com o Gemma via Ollama, em 57 idiomas, sem dependência de serviços em nuvem.</strong></p>
 
 <p align="center">
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/actions"><img src="https://github.com/mcp-tool-shop-org/py-polyglot/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot"><img src="https://codecov.io/gh/mcp-tool-shop-org/py-polyglot/branch/main/graph/badge.svg" alt="Codecov"></a>
   <a href="https://pypi.org/project/polyglot-gpu/"><img src="https://img.shields.io/pypi/v/polyglot-gpu" alt="PyPI"></a>
   <a href="https://pypi.org/project/polyglot-gpu/"><img src="https://img.shields.io/pypi/pyversions/polyglot-gpu" alt="Python"></a>
   <a href="https://github.com/mcp-tool-shop-org/py-polyglot/blob/main/LICENSE"><img src="https://img.shields.io/github/license/mcp-tool-shop-org/py-polyglot" alt="License"></a>
   <a href="https://mcp-tool-shop-org.github.io/py-polyglot/"><img src="https://img.shields.io/badge/Landing_Page-live-blue" alt="Landing Page"></a>
+  <a href="https://mcp-tool-shop-org.github.io/py-polyglot/handbook/"><img src="https://img.shields.io/badge/Handbook-docs-teal" alt="Handbook"></a>
 </p>
 
 ---
@@ -22,14 +24,15 @@ Port para Python de [polyglot-mcp](https://github.com/mcp-tool-shop-org/polyglot
 
 ## Características
 
-- **57 idiomas** — Tradução com o TranslateGemma via Ollama, executando 100% localmente na sua GPU.
+- **57 idiomas** — Traduza com o Gemma via Ollama, executando 100% localmente na sua GPU.
 - **Sem dependência de serviços em nuvem** — sem chaves de API, sem necessidade de internet após o download do modelo.
 - **Uso duplo** — API de biblioteca Python + servidor MCP em um único pacote.
 - **Compatível com Markdown** — preserva blocos de código, tabelas, HTML, URLs, badges.
-- **Cache inteligente** — cache por segmento com correspondência aproximada (memória de tradução).
+- **Cache inteligente** — cache em nível de segmento com correspondência aproximada (memória de tradução).
 - **Glossário de termos técnicos** — 12 termos técnicos integrados para traduções precisas.
 - **Automatização completa** — inicia automaticamente o Ollama, baixa automaticamente os modelos na primeira utilização.
 - **Seguro para GPU** — a concorrência controlada por semáforo evita a sobrecarga de VRAM.
+- **Otimizado para produção** — gerenciamento de conexões, registro estruturado, 100 testes.
 
 ## Requisitos
 
@@ -135,7 +138,7 @@ MCP Client (Claude Code, etc.)
 │  semaphore.py    │  GPU-safe concurrency
 │  validate.py     │  Output validation
 ├──────────────────┤
-│   ollama.py      │  httpx client → localhost:11434
+│   ollama.py      │  httpx pooled client → Ollama
 │   cache.py       │  Segment cache + fuzzy memory
 │  glossary.py     │  Software term dictionary
 │ languages.py     │  57 language definitions
@@ -152,7 +155,7 @@ MCP Client (Claude Code, etc.)
 | Variável | Padrão | Descrição |
 |----------|---------|-------------|
 | `POLYGLOT_MODEL` | `translategemma:12b` | Modelo Ollama padrão |
-| `POLYGLOT_CONCURRENCY` | `1` | Número máximo de chamadas Ollama simultâneas |
+| `POLYGLOT_CONCURRENCY` | `1` | Número máximo de chamadas simultâneas ao Ollama |
 
 ## Segurança
 

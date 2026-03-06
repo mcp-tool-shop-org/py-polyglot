@@ -15,7 +15,7 @@ export const config: SiteConfig = {
     headlineAccent: '57 languages on your GPU.',
     description: 'Python translation library + MCP server. TranslateGemma via Ollama — zero cloud dependency, zero API keys.',
     primaryCta: { href: '#usage', label: 'Get started' },
-    secondaryCta: { href: '#features', label: 'Learn more' },
+    secondaryCta: { href: 'handbook/', label: 'Read the Handbook' },
     previews: [
       { label: 'Install', code: 'pip install polyglot-gpu' },
       { label: 'Translate', code: 'result = await translate("Hello", "en", "ja")' },
