@@ -6,11 +6,12 @@ Auto-starts Ollama and auto-pulls models when needed.
 from __future__ import annotations
 
 import asyncio
+import json
+import logging
 import platform
 import shutil
 import subprocess
-import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Callable, Optional
 
 import httpx
@@ -18,10 +19,13 @@ import httpx
 from .errors import ErrorCode, PolyglotError
 from .semaphore import ollama_semaphore
 
+logger = logging.getLogger(__name__)
+
 # Timeouts
 GENERATE_TIMEOUT_S = 60.0
 API_TIMEOUT_S = 10.0
 PULL_TIMEOUT_S = 600.0
+STREAM_READ_TIMEOUT_S = 120.0  # per-chunk read timeout for streaming pulls
 
 # Retry config
 MAX_RETRIES = 2
@@ -62,14 +66,27 @@ StreamCallback = Callable[[str], None]
 class OllamaClient:
     def __init__(self, base_url: str = "http://localhost:11434"):
         self.base_url = base_url
+        self._client: Optional[httpx.AsyncClient] = None
+
+    async def _get_client(self, timeout: float = GENERATE_TIMEOUT_S) -> httpx.AsyncClient:
+        """Get or create the shared httpx client."""
+        if self._client is None or self._client.is_closed:
+            self._client = httpx.AsyncClient(
+                base_url=self.base_url,
+                timeout=httpx.Timeout(timeout, connect=10.0),
+            )
+        return self._client
+
+    async def aclose(self) -> None:
+        """Close the underlying httpx client."""
+        if self._client and not self._client.is_closed:
+            await self._client.aclose()
+            self._client = None
 
     async def generate(self, req: OllamaGenerateRequest) -> OllamaGenerateResponse:
         """Generate a completion with automatic retry. Guarded by semaphore."""
-        release = await ollama_semaphore.acquire()
-        try:
+        async with ollama_semaphore:
             return await self._generate_with_retry(req)
-        finally:
-            release()
 
     async def _generate_with_retry(self, req: OllamaGenerateRequest) -> OllamaGenerateResponse:
         last_error: Optional[PolyglotError] = None
@@ -80,10 +97,9 @@ class OllamaClient:
                 if err.retryable and attempt < MAX_RETRIES:
                     last_error = err
                     delay = RETRY_BASE_DELAY_S * (2 ** attempt)
-                    print(
-                        f"Retryable error ({err.code.value}), retrying in {delay}s "
-                        f"(attempt {attempt + 1}/{MAX_RETRIES})...",
-                        file=sys.stderr,
+                    logger.warning(
+                        "Retryable error (%s), retrying in %ss (attempt %d/%d)...",
+                        err.code.value, delay, attempt + 1, MAX_RETRIES,
                     )
                     await asyncio.sleep(delay)
                     continue
@@ -102,31 +118,31 @@ class OllamaClient:
         if options:
             body["options"] = options
 
-        async with httpx.AsyncClient(timeout=GENERATE_TIMEOUT_S) as client:
-            try:
-                resp = await client.post(f"{self.base_url}/api/generate", json=body)
-            except httpx.TimeoutException:
-                raise PolyglotError(
-                    code=ErrorCode.OLLAMA_TIMEOUT,
-                    message=f"Ollama generate timed out after {GENERATE_TIMEOUT_S}s (model: {req.model}).",
-                    hint='Restart Ollama, reduce parallelism, or use a smaller model (translategemma:4b).',
-                    retryable=True,
-                )
-            except httpx.ConnectError:
-                raise PolyglotError(
-                    code=ErrorCode.OLLAMA_UNAVAILABLE,
-                    message="Cannot connect to Ollama.",
-                    hint="Is it running? Start with: ollama serve",
-                    retryable=True,
-                )
-            except httpx.HTTPError as exc:
-                raise PolyglotError(
-                    code=ErrorCode.NETWORK_ERROR,
-                    message=f"Network error reaching Ollama.",
-                    hint="Check that Ollama is running and responsive.",
-                    cause=exc,
-                    retryable=True,
-                )
+        client = await self._get_client(GENERATE_TIMEOUT_S)
+        try:
+            resp = await client.post("/api/generate", json=body)
+        except httpx.TimeoutException:
+            raise PolyglotError(
+                code=ErrorCode.OLLAMA_TIMEOUT,
+                message=f"Ollama generate timed out after {GENERATE_TIMEOUT_S}s (model: {req.model}).",
+                hint='Restart Ollama, reduce parallelism, or use a smaller model (translategemma:4b).',
+                retryable=True,
+            )
+        except httpx.ConnectError:
+            raise PolyglotError(
+                code=ErrorCode.OLLAMA_UNAVAILABLE,
+                message="Cannot connect to Ollama.",
+                hint="Is it running? Start with: ollama serve",
+                retryable=True,
+            )
+        except httpx.HTTPError as exc:
+            raise PolyglotError(
+                code=ErrorCode.NETWORK_ERROR,
+                message="Network error reaching Ollama.",
+                hint="Check that Ollama is running and responsive.",
+                cause=exc,
+                retryable=True,
+            )
 
         if resp.status_code == 404 and "not found" in resp.text:
             raise PolyglotError(
@@ -158,11 +174,8 @@ class OllamaClient:
         self, req: OllamaGenerateRequest, on_token: StreamCallback
     ) -> OllamaGenerateResponse:
         """Generate with streaming — yields tokens via on_token callback. Guarded by semaphore."""
-        release = await ollama_semaphore.acquire()
-        try:
+        async with ollama_semaphore:
             return await self._generate_stream_with_retry(req, on_token)
-        finally:
-            release()
 
     async def _generate_stream_with_retry(
         self, req: OllamaGenerateRequest, on_token: StreamCallback
@@ -175,10 +188,9 @@ class OllamaClient:
                 if err.retryable and attempt < MAX_RETRIES:
                     last_error = err
                     delay = RETRY_BASE_DELAY_S * (2 ** attempt)
-                    print(
-                        f"Retryable error ({err.code.value}), retrying in {delay}s "
-                        f"(attempt {attempt + 1}/{MAX_RETRIES})...",
-                        file=sys.stderr,
+                    logger.warning(
+                        "Retryable error (%s), retrying in %ss (attempt %d/%d)...",
+                        err.code.value, delay, attempt + 1, MAX_RETRIES,
                     )
                     await asyncio.sleep(delay)
                     continue
@@ -202,9 +214,13 @@ class OllamaClient:
         full_response = ""
         last_chunk: Optional[OllamaGenerateResponse] = None
 
-        async with httpx.AsyncClient(timeout=GENERATE_TIMEOUT_S) as client:
+        # Use a dedicated client for streaming with appropriate read timeout
+        async with httpx.AsyncClient(
+            base_url=self.base_url,
+            timeout=httpx.Timeout(GENERATE_TIMEOUT_S, connect=10.0, read=STREAM_READ_TIMEOUT_S),
+        ) as stream_client:
             try:
-                async with client.stream("POST", f"{self.base_url}/api/generate", json=body) as resp:
+                async with stream_client.stream("POST", "/api/generate", json=body) as resp:
                     if resp.status_code == 404:
                         await resp.aread()
                         if "not found" in resp.text:
@@ -232,7 +248,6 @@ class OllamaClient:
                             if not line:
                                 continue
                             try:
-                                import json
                                 data = json.loads(line)
                                 token = data.get("response", "")
                                 if token:
@@ -248,8 +263,8 @@ class OllamaClient:
                                         eval_count=data.get("eval_count"),
                                         eval_duration=data.get("eval_duration"),
                                     )
-                            except (ValueError, KeyError):
-                                pass
+                            except (json.JSONDecodeError, KeyError) as exc:
+                                logger.debug("Ignoring malformed stream chunk: %s", exc)
             except httpx.TimeoutException:
                 raise PolyglotError(
                     code=ErrorCode.OLLAMA_TIMEOUT,
@@ -280,22 +295,24 @@ class OllamaClient:
         )
 
     async def list_models(self) -> list[OllamaModel]:
-        async with httpx.AsyncClient(timeout=API_TIMEOUT_S) as client:
-            resp = await client.get(f"{self.base_url}/api/tags")
-            if resp.status_code != 200:
-                raise RuntimeError(f"Ollama list failed ({resp.status_code})")
-            data = resp.json()
-            return [
-                OllamaModel(name=m["name"], size=m.get("size", 0), digest=m.get("digest", ""))
-                for m in data.get("models", [])
-            ]
+        client = await self._get_client(API_TIMEOUT_S)
+        resp = await client.get("/api/tags")
+        if resp.status_code != 200:
+            raise RuntimeError(f"Ollama list failed ({resp.status_code})")
+        data = resp.json()
+        return [
+            OllamaModel(name=m["name"], size=m.get("size", 0), digest=m.get("digest", ""))
+            for m in data.get("models", [])
+        ]
 
     async def is_available(self) -> bool:
         try:
-            async with httpx.AsyncClient(timeout=3.0) as client:
-                resp = await client.get(f"{self.base_url}/api/tags")
+            async with httpx.AsyncClient(
+                base_url=self.base_url, timeout=3.0
+            ) as client:
+                resp = await client.get("/api/tags")
                 return resp.status_code == 200
-        except Exception:
+        except (OSError, httpx.HTTPError):
             return False
 
     async def has_model(self, name: str) -> bool:
@@ -327,7 +344,7 @@ class OllamaClient:
             else:
                 kwargs["start_new_session"] = True
             subprocess.Popen([ollama_path, "serve"], **kwargs)
-        except Exception:
+        except OSError:
             return False
 
         for _ in range(20):
@@ -341,20 +358,22 @@ class OllamaClient:
         if await self.has_model(name):
             return True
 
-        print(f"Pulling {name} (may be several GB)...", file=sys.stderr)
+        logger.info("Pulling %s (may be several GB)...", name)
         try:
-            async with httpx.AsyncClient(timeout=PULL_TIMEOUT_S) as client:
-                async with client.stream(
+            async with httpx.AsyncClient(
+                base_url=self.base_url,
+                timeout=httpx.Timeout(PULL_TIMEOUT_S, connect=10.0, read=STREAM_READ_TIMEOUT_S),
+            ) as pull_client:
+                async with pull_client.stream(
                     "POST",
-                    f"{self.base_url}/api/pull",
+                    "/api/pull",
                     json={"name": name, "stream": True},
                 ) as resp:
                     if resp.status_code != 200:
                         await resp.aread()
-                        print(f"Pull failed: {resp.text}", file=sys.stderr)
+                        logger.error("Pull failed: %s", resp.text)
                         return False
 
-                    import json
                     last_pct = -1
                     buf = ""
                     async for chunk in resp.aiter_text():
@@ -371,20 +390,20 @@ class OllamaClient:
                                 if total and completed:
                                     pct = int(completed / total * 100)
                                     if pct != last_pct and pct % 10 == 0:
-                                        print(f"  {msg.get('status', 'downloading')}: {pct}%", file=sys.stderr)
+                                        logger.info("  %s: %d%%", msg.get("status", "downloading"), pct)
                                         last_pct = pct
                                 elif msg.get("status") and msg["status"] != "pulling":
-                                    print(f"  {msg['status']}", file=sys.stderr)
-                            except (ValueError, KeyError):
+                                    logger.info("  %s", msg["status"])
+                            except (json.JSONDecodeError, KeyError):
                                 pass
 
-            print(f"{name} ready.", file=sys.stderr)
+            logger.info("%s ready.", name)
             return True
         except httpx.TimeoutException:
-            print(f"Pull timed out after {PULL_TIMEOUT_S}s. Try: ollama pull {name}", file=sys.stderr)
+            logger.error("Pull timed out after %ss. Try: ollama pull %s", PULL_TIMEOUT_S, name)
             return False
-        except Exception as exc:
-            print(f"Pull error: {exc}", file=sys.stderr)
+        except (OSError, httpx.HTTPError) as exc:
+            logger.error("Pull error: %s", exc)
             return False
 
 
@@ -393,5 +412,5 @@ def _try_command(cmd: str) -> bool:
     try:
         subprocess.run([cmd, "--version"], capture_output=True, timeout=5)
         return True
-    except Exception:
+    except OSError:
         return False

@@ -9,18 +9,30 @@ from __future__ import annotations
 
 import asyncio
 import os
+from typing import Callable, Optional
 
 DEFAULT_CONCURRENCY = int(os.environ.get("POLYGLOT_CONCURRENCY", "1")) or 1
 
 
 class Semaphore:
-    """Async counting semaphore wrapping asyncio.Semaphore."""
+    """Async counting semaphore wrapping asyncio.Semaphore.
 
-    def __init__(self, limit: int = DEFAULT_CONCURRENCY):
+    Supports both context manager and manual acquire/release patterns::
+
+        async with sem:
+            ...
+
+        release = await sem.acquire()
+        try: ...
+        finally: release()
+    """
+
+    def __init__(self, limit: int = DEFAULT_CONCURRENCY) -> None:
         if limit < 1:
             raise ValueError("Semaphore limit must be >= 1")
         self._limit = limit
         self._sem = asyncio.Semaphore(limit)
+        self._lock = asyncio.Lock()
         self._active = 0
 
     @property
@@ -31,13 +43,29 @@ class Semaphore:
     def active(self) -> int:
         return self._active
 
-    async def acquire(self):
-        """Acquire a permit. Returns an async context manager release function."""
+    async def acquire(self) -> Callable[[], None]:
+        """Acquire a permit. Returns a release function."""
         await self._sem.acquire()
-        self._active += 1
+        async with self._lock:
+            self._active += 1
         return self._release
 
     def _release(self) -> None:
+        self._active -= 1
+        self._sem.release()
+
+    async def __aenter__(self) -> Semaphore:
+        await self._sem.acquire()
+        async with self._lock:
+            self._active += 1
+        return self
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[type],
+        exc_val: Optional[BaseException],
+        exc_tb: object,
+    ) -> None:
         self._active -= 1
         self._sem.release()
 

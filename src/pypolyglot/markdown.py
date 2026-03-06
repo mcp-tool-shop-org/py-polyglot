@@ -235,29 +235,13 @@ def reassemble_table(parsed: list[dict], translated_map: dict[str, str]) -> str:
 
 # --- Translation cleaning ---
 
-_OR_PATTERNS = [
-    re.compile(r"\nまたは\n.*", re.DOTALL),
-    re.compile(r"\n또는\n.*", re.DOTALL),
-    re.compile(r"\no\n(?=[A-Z]).*", re.DOTALL),
-    re.compile(r"\nou\n.*", re.DOTALL),
-    re.compile(r"\noder\n.*", re.DOTALL),
-    re.compile(r"\nили\n.*", re.DOTALL),
-    re.compile(r"\nया\n.*", re.DOTALL),
-    re.compile(r"\nveya\n.*", re.DOTALL),
-    re.compile(r"\nหรือ\n.*", re.DOTALL),
-    re.compile(r"\nhoặc\n.*", re.DOTALL),
-    re.compile(r"\natau\n.*", re.DOTALL),
-    re.compile(r"\nof\n(?=[A-Z]).*", re.DOTALL),
-]
+from .polish import polish, polish_heading
 
 
 def clean_translation(text: str, is_heading: bool = False) -> str:
-    cleaned = text
-    for pat in _OR_PATTERNS:
-        cleaned = pat.sub("", cleaned)
     if is_heading:
-        cleaned = re.sub(r"[。．.]\s*$", "", cleaned)
-    return cleaned.strip()
+        return polish_heading(text)
+    return polish(text)
 
 
 # --- HTML tagline helpers ---

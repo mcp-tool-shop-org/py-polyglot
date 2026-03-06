@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.3 (2026-03-06)
+
+- httpx connection pooling in OllamaClient (reuse connections instead of per-request)
+- Semaphore now supports `async with` context manager pattern
+- Semaphore `_active` counter protected by asyncio.Lock
+- Cache path traversal check uses `relative_to()` instead of string comparison
+- Structured logging replaces `print(stderr)` throughout ollama.py
+- Specific exception types instead of bare `except Exception`
+- Streaming pull timeout protection via per-chunk read timeout
+- Deduplicated OR_PATTERNS (markdown.py now imports from polish.py)
+- Test suite expanded from 55 to 100 tests (errors, semaphore, translate, translate_all, ollama)
+
 ## 1.0.2 (2026-03-06)
 
 - Renamed PyPI distribution from `py-polyglot` to `polyglot-gpu` (import name `pypolyglot` unchanged)

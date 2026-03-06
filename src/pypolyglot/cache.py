@@ -215,7 +215,6 @@ def _get_cache_path(readme_path: str) -> Path:
     """Get the cache file path next to the source file."""
     dir_ = Path(readme_path).resolve().parent
     cache_path = (dir_ / ".polyglot-cache.json").resolve()
-    # Guard against path traversal
-    if not str(cache_path).startswith(str(dir_)):
-        raise ValueError(f'Cache path traversal blocked: "{cache_path}" escapes "{dir_}".')
+    # Guard against path traversal (relative_to raises ValueError if outside)
+    cache_path.relative_to(dir_)
     return cache_path

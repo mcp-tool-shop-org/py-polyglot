@@ -15,7 +15,7 @@ MCP server:
     polyglot-gpu
 """
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 from .translate import translate, translate_batch, TranslateResult, TranslateOptions
 from .markdown import translate_markdown, TranslateMarkdownResult, TranslateMarkdownOptions

@@ -126,19 +126,19 @@ async def translate_all(
 
     async def translate_lang(lang: TargetLanguage) -> TranslateAllLanguageResult:
         nonlocal completed
-        release = await sem.acquire()
         lang_start = time.time()
         try:
-            opts = TranslateMarkdownOptions(model=model, cache=False)
-            result = await translate_markdown(markdown, source_lang, lang.code, opts)
-            lang_result = TranslateAllLanguageResult(
-                lang=lang.code,
-                name=lang.name,
-                status="ok",
-                file_suffix=lang.file or lang.code,
-                markdown=result.markdown,
-                duration_ms=(time.time() - lang_start) * 1000,
-            )
+            async with sem:
+                opts = TranslateMarkdownOptions(model=model, cache=False)
+                result = await translate_markdown(markdown, source_lang, lang.code, opts)
+                lang_result = TranslateAllLanguageResult(
+                    lang=lang.code,
+                    name=lang.name,
+                    status="ok",
+                    file_suffix=lang.file or lang.code,
+                    markdown=result.markdown,
+                    duration_ms=(time.time() - lang_start) * 1000,
+                )
         except Exception as err:
             lang_result = TranslateAllLanguageResult(
                 lang=lang.code,
@@ -149,7 +149,6 @@ async def translate_all(
                 duration_ms=(time.time() - lang_start) * 1000,
             )
         finally:
-            release()
             completed += 1
             if on_progress:
                 on_progress(completed, len(targets), lang.name)

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "polyglot-gpu"
-version = "1.0.2"
+version = "1.0.3"
 description = "Local GPU translation Python library + MCP server — TranslateGemma via Ollama, 57 languages, zero cloud dependency"
 readme = "README.md"
 license = "MIT"

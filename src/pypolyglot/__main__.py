@@ -1,9 +1,9 @@
-"""Entry point for running py-polyglot as an MCP server."""
+"""Entry point for running polyglot-gpu as an MCP server."""
 
 from .server import mcp
 
 
-def main():
+def main() -> None:
     mcp.run(transport="stdio")
 
 
