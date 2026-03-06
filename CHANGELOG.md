@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.4 (2026-03-06)
+
+- Starlight handbook (7 pages) with Pagefind search
+- Starlight i18n: handbook index translated to 7 languages via polyglot-mcp
+- README updated with Production-hardened feature line + Handbook badge
+- All translated READMEs retranslated to include v1.0.3 content
+- Landing page CTA now links to handbook
+
 ## 1.0.3 (2026-03-06)
 
 - httpx connection pooling in OllamaClient (reuse connections instead of per-request)
